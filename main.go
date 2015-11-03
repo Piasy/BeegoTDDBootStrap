@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/astaxie/beego/config"
 	_ "github.com/go-sql-driver/mysql"
 
 	_ "github.com/Piasy/BeegoBootStrap/docs"
@@ -11,11 +14,23 @@ import (
 )
 
 func init() {
-	beego.Debug("main::init() called")
+	appConf, err := config.NewConfig("ini", "conf/app.conf")
+	if err != nil {
+		panic(err)
+	}
+	dbUser := appConf.String("admin::dbUser")
+	dbPass := appConf.String("admin::dbPass")
+	dbName := appConf.String("admin::dbName")
 
 	orm.RegisterDriver("mymysql", orm.DR_MySQL)
 
-	orm.RegisterDataBase("default", "mysql", "root:@/test?charset=utf8")
+	var conn string
+	if dbPass == "" {
+		conn = fmt.Sprintf("%s:@/%s?charset=utf8", dbUser, dbName)
+	} else {
+		conn = fmt.Sprintf("%s:%s:@/%s?charset=utf8", dbUser, dbPass, dbName)
+	}
+	orm.RegisterDataBase("default", "mysql", conn)
 }
 
 func main() {
