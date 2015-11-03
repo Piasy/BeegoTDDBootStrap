@@ -28,6 +28,7 @@ _testmain.go
 
 lastupdate.tmp
 
+docs/
 */**_controllers.go
 conf/app.conf
 
