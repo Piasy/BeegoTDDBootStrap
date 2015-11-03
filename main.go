@@ -28,7 +28,7 @@ func init() {
 	if dbPass == "" {
 		conn = fmt.Sprintf("%s:@/%s?charset=utf8", dbUser, dbName)
 	} else {
-		conn = fmt.Sprintf("%s:%s:@/%s?charset=utf8", dbUser, dbPass, dbName)
+		conn = fmt.Sprintf("%s:%s@/%s?charset=utf8", dbUser, dbPass, dbName)
 	}
 	orm.RegisterDataBase("default", "mysql", conn)
 }
