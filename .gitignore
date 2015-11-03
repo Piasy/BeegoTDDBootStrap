@@ -22,3 +22,13 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+/.idea
+/*.iml
+
+lastupdate.tmp
+
+*/**_controllers.go
+conf/app.conf
+
+BeegoBootStrap
