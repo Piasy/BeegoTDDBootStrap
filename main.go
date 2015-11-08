@@ -8,9 +8,9 @@ import (
 	"github.com/astaxie/beego/config"
 	_ "github.com/go-sql-driver/mysql"
 
-	_ "github.com/Piasy/BeegoBootStrap/docs"
-	_ "github.com/Piasy/BeegoBootStrap/routers"
-	_ "github.com/Piasy/BeegoBootStrap/models"
+	_ "github.com/Piasy/BeegoTDDBootStrap/docs"
+	_ "github.com/Piasy/BeegoTDDBootStrap/routers"
+	_ "github.com/Piasy/BeegoTDDBootStrap/models"
 )
 
 func init() {
@@ -34,7 +34,7 @@ func init() {
 }
 
 func main() {
-
+	beego.SetLogger("file", `{"filename":"logs/etboom.log"}`)
 	if beego.RunMode == "dev" {
 		beego.DirectoryIndex = true
 		beego.StaticDir["/swagger"] = "swagger"

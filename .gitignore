@@ -29,7 +29,10 @@ _testmain.go
 lastupdate.tmp
 
 docs/
-*/**_controllers.go
-conf/app.conf
 
-BeegoBootStrap
+routers/commentsRouter_**_controllers.go
+
+BeegoTDDBootStrap
+
+tests/routers
+tests/lastupdate.tmp
