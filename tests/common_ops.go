@@ -32,18 +32,13 @@ func initORM() {
 	if err != nil {
 		panic(err)
 	}
+	dbAddr := appConf.String("admin::dbAddr")
 	dbUser := appConf.String("admin::dbUser")
 	dbPass := appConf.String("admin::dbPass")
-	dbName := "beego_unit_test"
+	dbName := appConf.String("admin::dbName")
 
 	orm.RegisterDriver("mymysql", orm.DRMySQL)
-
-	var conn string
-	if dbPass == "" {
-		conn = fmt.Sprintf("%s:@/%s?charset=utf8", dbUser, dbName)
-	} else {
-		conn = fmt.Sprintf("%s:%s@/%s?charset=utf8", dbUser, dbPass, dbName)
-	}
+	conn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4", dbUser, dbPass, dbAddr, dbName)
 	orm.RegisterDataBase("default", "mysql", conn)
 	ormInitiated = true
 }

@@ -3,45 +3,12 @@ package models_test
 import (
 	"testing"
 	"encoding/json"
-	"fmt"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/astaxie/beego/orm"
-	"github.com/astaxie/beego/config"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/astaxie/beego"
 
 	"github.com/Piasy/BeegoTDDBootStrap/models"
 	"github.com/Piasy/BeegoTDDBootStrap/utils"
 )
-
-var ormInitiated bool = false
-
-func initORM() {
-	// switch to prod
-	beego.BConfig.RunMode = "prod"
-	if ormInitiated {
-		return
-	}
-	appConf, err := config.NewConfig("ini", "../conf/app.conf")
-	if err != nil {
-		panic(err)
-	}
-	dbUser := appConf.String("admin::dbUser")
-	dbPass := appConf.String("admin::dbPass")
-	dbName := "beego_unit_test"
-
-	orm.RegisterDriver("mymysql", orm.DRMySQL)
-
-	var conn string
-	if dbPass == "" {
-		conn = fmt.Sprintf("%s:@/%s?charset=utf8", dbUser, dbName)
-	} else {
-		conn = fmt.Sprintf("%s:%s@/%s?charset=utf8", dbUser, dbPass, dbName)
-	}
-	orm.RegisterDataBase("default", "mysql", conn)
-	ormInitiated = true
-}
 
 func TestDeSerial(t *testing.T) {
 	mock := "{\"nickname\":\"Piasy\",\"phone\":\"18801234567\",\"uid\":1905378617,\"username\":\"wx:piasy_umumu\"}"
@@ -196,31 +163,4 @@ func TestVerifyUserByPhone(t *testing.T) {
 	user, err = models.GetUserByPhone(phone)
 	assert.Nil(t, user)
 	assert.Equal(t, utils.ERROR_CODE_USERS_USER_NOT_EXISTS, err)
-}
-
-func assertUserEquals(t *testing.T, expect, actual *models.User) {
-	assert.Equal(t, expect.Id, actual.Id)
-	assert.Equal(t, expect.Uid, actual.Uid)
-	assert.Equal(t, expect.Token, actual.Token)
-	assert.Equal(t, expect.Username, actual.Username)
-	assert.Equal(t, expect.Phone, actual.Phone)
-	assert.Equal(t, expect.Password, actual.Password)
-	assert.Equal(t, expect.Nickname, actual.Nickname)
-}
-
-func assertUserEqualsWithoutToken(t *testing.T, expect, actual *models.User) {
-	assert.Equal(t, expect.Id, actual.Id)
-	assert.Equal(t, expect.Uid, actual.Uid)
-	assert.NotEqual(t, expect.Token, actual.Token)
-	assert.Equal(t, expect.Username, actual.Username)
-	assert.Equal(t, expect.Phone, actual.Phone)
-	assert.Equal(t, expect.Password, actual.Password)
-	assert.Equal(t, expect.Nickname, actual.Nickname)
-}
-
-func deleteUser(t *testing.T, id int64) {
-	o := orm.NewOrm()
-	user := models.User{Id: id}
-	_, err := o.Delete(&user)
-	assert.Nil(t, err)
 }
