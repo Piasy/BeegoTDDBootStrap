@@ -30,7 +30,7 @@ lastupdate.tmp
 
 docs/
 
-routers/commentsRouter_**_controllers.go
+routers/commentsRouter_github_com_Piasy_BeegoTDDBootStrap_controllers.go
 
 BeegoTDDBootStrap
 
