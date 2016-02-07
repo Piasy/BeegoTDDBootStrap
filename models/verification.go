@@ -16,6 +16,12 @@ type Verification struct {
 	Expire int64 `json:"expire"`
 }
 
+const VERIFICATIONS_TABLE_NAME string = "verifications"
+
+func (v *Verification) TableName() string {
+	return VERIFICATIONS_TABLE_NAME
+}
+
 func CreateVerification(phone string) int {
 	o := orm.NewOrm()
 	code := utils.GenVerifyCode()

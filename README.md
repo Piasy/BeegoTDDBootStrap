@@ -3,6 +3,7 @@ A bootstrap project for TDD using beego framework.
 
 ## Dev tips
 +  modify the `.ci/prepare_db.sh`, `.ci/clean_db.sh`, `conf/app.conf` files, to configure your DB.
++  create `logs` dir, and touch `orm.log`, then run `bee run`.
 +  TDD steps
   +  understand your demand
   +  design API, write API docs, design test cases

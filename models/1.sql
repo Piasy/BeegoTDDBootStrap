@@ -1,18 +1,24 @@
-CREATE DATABASE IF NOT EXISTS `test` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE IF NOT EXISTS `test` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `user` (
-  `id` BIGINT PRIMARY KEY NOT NULL AUTO_INCREMENT ,
-  `uid` BIGINT NOT NULL UNIQUE ,
-  `username` VARCHAR(255) NOT NULL UNIQUE ,
-  `password` VARCHAR(40) NOT NULL ,
-  `nickname` VARCHAR(40) NOT NULL ,
-  `token` VARCHAR(40) NOT NULL UNIQUE ,
-  `phone` VARCHAR(11) NOT NULL
-);
+-- --------------------------------------------------
+--  Table Structure for `github.com/Piasy/BeegoTDDBootStrap/models.User`
+-- --------------------------------------------------
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+  `uid` bigint NOT NULL DEFAULT 0 ,
+  `username` varchar(255) NOT NULL DEFAULT '' ,
+  `password` varchar(255) NOT NULL DEFAULT '' ,
+  `nickname` varchar(255) NOT NULL DEFAULT '' ,
+  `token` varchar(255) NOT NULL DEFAULT '' ,
+  `phone` varchar(255) NOT NULL DEFAULT ''
+) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `verification` (
-  `id` BIGINT PRIMARY KEY NOT NULL AUTO_INCREMENT ,
-  `phone` VARCHAR(11) NOT NULL UNIQUE ,
-  `code` VARCHAR(6) NOT NULL ,
-  `expire` BIGINT NOT NULL
-);
+-- --------------------------------------------------
+--  Table Structure for `github.com/Piasy/BeegoTDDBootStrap/models.Verification`
+-- --------------------------------------------------
+CREATE TABLE IF NOT EXISTS `verifications` (
+  `id` bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+  `phone` varchar(255) NOT NULL DEFAULT '' ,
+  `code` varchar(255) NOT NULL DEFAULT '' ,
+  `expire` bigint NOT NULL DEFAULT 0
+) ENGINE=InnoDB;

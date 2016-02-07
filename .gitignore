@@ -33,6 +33,9 @@ docs/
 routers/commentsRouter_github_com_Piasy_BeegoTDDBootStrap_controllers.go
 
 BeegoTDDBootStrap
+main
 
 tests/routers
 tests/lastupdate.tmp
+
+logs

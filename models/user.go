@@ -17,6 +17,12 @@ type User struct {
 	Phone    string `json:"phone,omitempty"`
 }
 
+const USERS_TABLE_NAME string = "users"
+
+func (u *User) TableName() string {
+	return USERS_TABLE_NAME
+}
+
 func UserPhoneExists(phone string) bool {
 	o := orm.NewOrm()
 	user := User{Username: "phone:" + phone}

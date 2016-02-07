@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -18,26 +19,26 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+	dbAddr := appConf.String("admin::dbAddr")
 	dbUser := appConf.String("admin::dbUser")
 	dbPass := appConf.String("admin::dbPass")
 	dbName := appConf.String("admin::dbName")
 
 	orm.RegisterDriver("mymysql", orm.DRMySQL)
-
-	var conn string
-	if dbPass == "" {
-		conn = fmt.Sprintf("%s:@/%s?charset=utf8", dbUser, dbName)
-	} else {
-		conn = fmt.Sprintf("%s:%s@/%s?charset=utf8", dbUser, dbPass, dbName)
-	}
+	conn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4", dbUser, dbPass, dbAddr, dbName)
 	orm.RegisterDataBase("default", "mysql", conn)
 }
 
 func main() {
-	beego.SetLogger("file", `{"filename":"logs/etboom.log"}`)
+	beego.SetLogger("file", `{"filename":"logs/beego_bootstrap_api.log"}`)
+	orm.RunCommand()
 	if beego.BConfig.RunMode == "dev" {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
+
+		orm.Debug = true
+		file, _ := os.OpenFile("logs/orm.log", os.O_APPEND|os.O_WRONLY, 0600)
+		orm.DebugLog = orm.NewLog(file)
 	}
 	beego.Run()
 }
