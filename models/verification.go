@@ -49,7 +49,7 @@ func CheckVerifyCode(phone, code string) int {
 		return invalidateVerification(&verification, o)
 	}
 
-	if beego.RunMode == "dev" {
+	if beego.BConfig.RunMode == "dev" {
 		return invalidateVerification(&verification, o)
 	}
 	return utils.ERROR_CODE_VERIFY_CODE_MISMATCH

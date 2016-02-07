@@ -19,7 +19,7 @@ var ormInitiated bool = false
 
 func initORM() {
 	// switch to prod
-	beego.RunMode = "prod"
+	beego.BConfig.RunMode = "prod"
 	if ormInitiated {
 		return
 	}
@@ -31,7 +31,7 @@ func initORM() {
 	dbPass := appConf.String("admin::dbPass")
 	dbName := "beego_unit_test"
 
-	orm.RegisterDriver("mymysql", orm.DR_MySQL)
+	orm.RegisterDriver("mymysql", orm.DRMySQL)
 
 	var conn string
 	if dbPass == "" {

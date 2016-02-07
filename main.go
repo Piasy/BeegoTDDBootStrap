@@ -22,7 +22,7 @@ func init() {
 	dbPass := appConf.String("admin::dbPass")
 	dbName := appConf.String("admin::dbName")
 
-	orm.RegisterDriver("mymysql", orm.DR_MySQL)
+	orm.RegisterDriver("mymysql", orm.DRMySQL)
 
 	var conn string
 	if dbPass == "" {
@@ -35,9 +35,9 @@ func init() {
 
 func main() {
 	beego.SetLogger("file", `{"filename":"logs/etboom.log"}`)
-	if beego.RunMode == "dev" {
-		beego.DirectoryIndex = true
-		beego.StaticDir["/swagger"] = "swagger"
+	if beego.BConfig.RunMode == "dev" {
+		beego.BConfig.WebConfig.DirectoryIndex = true
+		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
 	beego.Run()
 }

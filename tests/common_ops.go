@@ -36,7 +36,7 @@ func initORM() {
 	dbPass := appConf.String("admin::dbPass")
 	dbName := "beego_unit_test"
 
-	orm.RegisterDriver("mymysql", orm.DR_MySQL)
+	orm.RegisterDriver("mymysql", orm.DRMySQL)
 
 	var conn string
 	if dbPass == "" {
@@ -54,7 +54,7 @@ func init() {
 	beego.TestBeegoInit(apppath)
 	initORM()
 	// switch to prod
-	beego.RunMode = "prod"
+	beego.BConfig.RunMode = "prod"
 }
 
 func deleteUser(t *testing.T, id int64) {

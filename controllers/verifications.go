@@ -34,5 +34,5 @@ func (this *VerificationsController) Post() {
 		this.Ctx.ResponseWriter.WriteHeader(403)
 		this.Data["json"] = utils.Issue(utils.ERROR_CODE_PARAM_ERROR, this.Ctx.Request.URL.String())
 	}
-	this.ServeJson()
+	this.ServeJSON()
 }
