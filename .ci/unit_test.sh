@@ -20,6 +20,8 @@ function doTest()
 .ci/prepare_db.sh && \
 cd models && doTest && cd .. && \
 cd utils && doTest
+passed=$?
 
-echo "passed: $?"
+echo "passed: $passed"
 cd .. && .ci/clean_db.sh
+exit ${passed}

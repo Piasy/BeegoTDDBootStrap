@@ -17,8 +17,9 @@ function doTest()
     return 0
 }
 
-.ci/prepare_db.sh && \
-cd tests && doTest
+.ci/prepare_db.sh && cd tests && doTest
+passed=$?
 
-echo "passed: $?"
+echo "passed: $passed"
 cd .. && .ci/clean_db.sh
+exit ${passed}
