@@ -3,6 +3,7 @@ package utils
 import (
 	"crypto/sha1"
 	"fmt"
+	"encoding/base64"
 )
 
 func Sha1(input string) string {
@@ -14,4 +15,8 @@ func Sha1(input string) string {
 
 func Secret2Password(username, secret string) string {
 	return Sha1(Sha1(secret[:8]) + Sha1(username) + Sha1(secret[8:]))
+}
+
+func Base64(input string) string {
+	return base64.StdEncoding.EncodeToString([]byte(input))
 }

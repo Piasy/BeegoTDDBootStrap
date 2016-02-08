@@ -25,7 +25,7 @@ func (this *TokensController) Post() {
 	phone := this.GetString("phone")
 	secret := this.GetString("secret")
 	if utils.IsValidPhone(phone) && len(secret) == 40 {
-		user, err := models.VerifyUserByPhone(phone, secret)
+		user, err := models.VerifyUserByPhone(&phone, secret)
 		if err > 0 {
 			this.Ctx.ResponseWriter.WriteHeader(422)
 			this.Data["json"] = utils.Issue(err, this.Ctx.Request.URL.String())

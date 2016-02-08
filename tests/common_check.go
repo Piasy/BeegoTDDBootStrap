@@ -18,10 +18,21 @@ func soResponseWithStatusCode(w *httptest.ResponseRecorder, code int) {
 
 func soUserShouldEqual(actual, expect *models.User) {
 	So(actual.Uid, ShouldEqual, expect.Uid)
-	So(actual.Username, ShouldEqual, expect.Username)
-	So(actual.Phone, ShouldEqual, expect.Phone)
+
+	So(utils.AreStringEquals(actual.Phone, expect.Phone), ShouldBeTrue)
+	So(utils.IsEmptyString(actual.WeiXin), ShouldBeTrue)
+	So(utils.IsEmptyString(actual.WeiBo), ShouldBeTrue)
+	So(utils.IsEmptyString(actual.QQ), ShouldBeTrue)
+
 	So(actual.Nickname, ShouldEqual, expect.Nickname)
-	So(actual.Phone, ShouldEqual, expect.Phone)
+	So(actual.QQNickName, ShouldEqual, expect.QQNickName)
+	So(actual.WeiBoNickName, ShouldEqual, expect.WeiBoNickName)
+	So(actual.WeiXinNickName, ShouldEqual, expect.WeiXinNickName)
+	So(actual.Gender, ShouldEqual, expect.Gender)
+	So(actual.Avatar, ShouldEqual, expect.Avatar)
+
+	So(actual.CreateAt, ShouldEqual, expect.CreateAt)
+	So(actual.UpdateAt, ShouldEqual, expect.UpdateAt)
 }
 
 func soShouldBeApiError(body *bytes.Buffer, code int, request string) {

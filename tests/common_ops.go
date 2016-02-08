@@ -20,6 +20,8 @@ import (
 
 	_ "github.com/Piasy/BeegoTDDBootStrap/routers"
 	"github.com/Piasy/BeegoTDDBootStrap/models"
+	"github.com/Piasy/BeegoTDDBootStrap/controllers"
+	"github.com/Piasy/BeegoTDDBootStrap/utils"
 )
 
 var ormInitiated bool = false
@@ -35,10 +37,17 @@ func initORM() {
 	dbAddr := appConf.String("admin::dbAddr")
 	dbUser := appConf.String("admin::dbUser")
 	dbPass := appConf.String("admin::dbPass")
-	dbName := appConf.String("admin::dbName")
+	controllers.ALI_YUN_AK_ID = appConf.String("admin::akId")
+	controllers.ALI_YUN_AK_KEY = appConf.String("admin::akKey")
+	controllers.QQ_OAUTH_CONSUMER_KEY = appConf.String("admin::qqOAuthConsumerKey")
+	clientId := appConf.String("admin::clientId")
+	clientSecret := appConf.String("admin::clientSecret")
+	controllers.BASIC_AUTH_AUTHORIZATION = utils.Base64(clientId + ":" + clientSecret)
+
+	controllers.VISITOR_TOKEN = appConf.String("admin::visitorToken")
 
 	orm.RegisterDriver("mymysql", orm.DRMySQL)
-	conn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4", dbUser, dbPass, dbAddr, dbName)
+	conn := fmt.Sprintf("%s:%s@tcp(%s)/beego_unit_test?charset=utf8mb4", dbUser, dbPass, dbAddr)
 	orm.RegisterDataBase("default", "mysql", conn)
 	ormInitiated = true
 }
@@ -66,9 +75,10 @@ func deleteVerification(t *testing.T, id int64) {
 	assert.Nil(t, err)
 }
 
-func createVerification(t *testing.T, subject, phone string) *models.Verification  {
+func createVerification(t *testing.T, subject, phone string) *models.Verification {
 	request, _ := http.NewRequest("POST", "/v1/verifications/", bytes.NewBuffer([]byte("phone=" + phone)))
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Add("Authorization", "dGVzdF9jbGllbnQ6dGVzdF9wYXNz")
 	recorder := httptest.NewRecorder()
 	beego.BeeApp.Handlers.ServeHTTP(recorder, request)
 	beego.Debug("testing <", subject, ">: create verification, Code[", recorder.Code, "]\n", recorder.Body.String())
@@ -97,12 +107,13 @@ func createUser(t *testing.T, subject, phone, secret, code string) *models.User 
 	request, _ := http.NewRequest("POST", "/v1/users/",
 		bytes.NewBuffer([]byte(fmt.Sprintf("phone=%s&secret=%s&code=%s", phone, secret, code))))
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Add("Authorization", "dGVzdF9jbGllbnQ6dGVzdF9wYXNz")
 	recorder := httptest.NewRecorder()
 	beego.BeeApp.Handlers.ServeHTTP(recorder, request)
 	beego.Debug("testing <", subject, ">: create user, Code[", recorder.Code, "]\n", recorder.Body.String())
 
 	o := orm.NewOrm()
-	fromDB := models.User{Phone: "18801234567"}
+	fromDB := models.User{Phone: &phone}
 	err := o.Read(&fromDB, "Phone")
 	assert.Nil(t, err)
 
@@ -157,8 +168,9 @@ func checkIsApiErrorRequest(t *testing.T, subject string, request *http.Request,
 
 func updateTokenByPhone(t *testing.T, subject string, expect *models.User, secret string) {
 	request, _ := http.NewRequest("POST", "/v1/tokens/",
-		bytes.NewBuffer([]byte(fmt.Sprintf("phone=%s&secret=%s", expect.Phone, secret))))
+		bytes.NewBuffer([]byte(fmt.Sprintf("phone=%s&secret=%s", *expect.Phone, secret))))
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Add("Authorization", "dGVzdF9jbGllbnQ6dGVzdF9wYXNz")
 	recorder := httptest.NewRecorder()
 	beego.BeeApp.Handlers.ServeHTTP(recorder, request)
 	beego.Debug("testing <", subject, ">: verify user, Code[", recorder.Code, "]\n", recorder.Body.String())
@@ -171,7 +183,35 @@ func updateTokenByPhone(t *testing.T, subject string, expect *models.User, secre
 			var got models.User
 			err := json.Unmarshal(recorder.Body.Bytes(), &got)
 			So(err, ShouldBeNil)
+			expect.UpdateAt = got.UpdateAt
 			soUserShouldEqual(&got, expect)
 		})
 	})
+}
+
+func patchUserInfo(t *testing.T, subject, token string, body []byte) *models.User {
+	request, _ := http.NewRequest("PATCH", "/v1/users/", bytes.NewBuffer(body))
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	recorder := httptest.NewRecorder()
+	beego.BeeApp.Handlers.ServeHTTP(recorder, request)
+	beego.Debug("testing <", subject, ">, Code[", recorder.Code, "]\n", recorder.Body.String())
+
+	o := orm.NewOrm()
+	fromDB := models.User{Token: token}
+	err := o.Read(&fromDB, "Token")
+	assert.Nil(t, err)
+
+	Convey("Subject: " + subject + "\n", t, func() {
+		Convey("Status code should be 201", func() {
+			soResponseWithStatusCode(recorder, 201)
+		})
+		Convey("Create should success", func() {
+			var updated models.User
+			err := json.Unmarshal(recorder.Body.Bytes(), &updated)
+			So(err, ShouldBeNil)
+			soUserShouldEqual(&updated, &fromDB)
+		})
+	})
+
+	return &fromDB
 }

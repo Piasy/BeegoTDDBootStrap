@@ -10,10 +10,10 @@ import (
 )
 
 type Verification struct {
-	Id     int64 `json:"-"`
-	Phone  string `json:"phone"`
-	Code   string `json:"code"`
-	Expire int64 `json:"expire"`
+	Id     int64 `json:"-" orm:"pk;auto"`
+	Phone  string `json:"phone" orm:"column(phone);unique;index;size(20)"`
+	Code   string `json:"code" orm:"column(code);size(6)"`
+	Expire int64 `json:"expire" orm:"column(expire)"`
 }
 
 const VERIFICATIONS_TABLE_NAME string = "verifications"

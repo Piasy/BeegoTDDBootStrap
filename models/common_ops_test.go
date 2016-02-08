@@ -11,6 +11,7 @@ import (
 	"github.com/astaxie/beego"
 
 	"github.com/Piasy/BeegoTDDBootStrap/models"
+	"github.com/Piasy/BeegoTDDBootStrap/utils"
 )
 
 var ormInitiated bool = false
@@ -28,10 +29,9 @@ func initORM() {
 	dbAddr := appConf.String("admin::dbAddr")
 	dbUser := appConf.String("admin::dbUser")
 	dbPass := appConf.String("admin::dbPass")
-	dbName := appConf.String("admin::dbName")
 
 	orm.RegisterDriver("mymysql", orm.DRMySQL)
-	conn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4", dbUser, dbPass, dbAddr, dbName)
+	conn := fmt.Sprintf("%s:%s@tcp(%s)/beego_unit_test?charset=utf8mb4", dbUser, dbPass, dbAddr)
 	orm.RegisterDataBase("default", "mysql", conn)
 	ormInitiated = true
 }
@@ -45,22 +45,46 @@ func deleteVerification(t *testing.T, id int64) {
 
 func assertUserEquals(t *testing.T, expect, actual *models.User) {
 	assert.Equal(t, expect.Id, actual.Id)
+
 	assert.Equal(t, expect.Uid, actual.Uid)
 	assert.Equal(t, expect.Token, actual.Token)
-	assert.Equal(t, expect.Username, actual.Username)
-	assert.Equal(t, expect.Phone, actual.Phone)
+	assert.True(t, utils.AreStringEquals(actual.Phone, expect.Phone))
+	assert.True(t, utils.AreStringEquals(actual.WeiXin, expect.WeiXin))
+	assert.True(t, utils.AreStringEquals(actual.WeiBo, expect.WeiBo))
+	assert.True(t, utils.AreStringEquals(actual.QQ, expect.QQ))
+
 	assert.Equal(t, expect.Password, actual.Password)
 	assert.Equal(t, expect.Nickname, actual.Nickname)
+	assert.Equal(t, expect.QQNickName, actual.QQNickName)
+	assert.Equal(t, expect.WeiBoNickName, actual.WeiBoNickName)
+	assert.Equal(t, expect.WeiXinNickName, actual.WeiXinNickName)
+	assert.Equal(t, expect.Gender, actual.Gender)
+	assert.Equal(t, expect.Avatar, actual.Avatar)
+
+	assert.Equal(t, expect.CreateAt, actual.CreateAt)
+	assert.Equal(t, expect.UpdateAt, actual.UpdateAt)
+
 }
 
 func assertUserEqualsWithoutToken(t *testing.T, expect, actual *models.User) {
 	assert.Equal(t, expect.Id, actual.Id)
+
 	assert.Equal(t, expect.Uid, actual.Uid)
-	assert.NotEqual(t, expect.Token, actual.Token)
-	assert.Equal(t, expect.Username, actual.Username)
-	assert.Equal(t, expect.Phone, actual.Phone)
+	assert.True(t, utils.AreStringEquals(actual.Phone, expect.Phone))
+	assert.True(t, utils.AreStringEquals(actual.WeiXin, expect.WeiXin))
+	assert.True(t, utils.AreStringEquals(actual.WeiBo, expect.WeiBo))
+	assert.True(t, utils.AreStringEquals(actual.QQ, expect.QQ))
+
 	assert.Equal(t, expect.Password, actual.Password)
 	assert.Equal(t, expect.Nickname, actual.Nickname)
+	assert.Equal(t, expect.QQNickName, actual.QQNickName)
+	assert.Equal(t, expect.WeiBoNickName, actual.WeiBoNickName)
+	assert.Equal(t, expect.WeiXinNickName, actual.WeiXinNickName)
+	assert.Equal(t, expect.Gender, actual.Gender)
+	assert.Equal(t, expect.Avatar, actual.Avatar)
+
+	assert.Equal(t, expect.CreateAt, actual.CreateAt)
+	assert.Equal(t, expect.UpdateAt, actual.UpdateAt)
 }
 
 func deleteUser(t *testing.T, id int64) {

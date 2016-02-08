@@ -36,3 +36,9 @@ func TestSecret2Password(t *testing.T) {
 	password2 := "d346f02f85cbba9dc662a67f44d222c397712242"
 	assert.Equal(t, password2, utils.Secret2Password(username2, secret2))
 }
+
+func TestBase64(t *testing.T) {
+	clientId := "test_client"
+	clientSecret := "test_pass"
+	assert.Equal(t, "dGVzdF9jbGllbnQ6dGVzdF9wYXNz", utils.Base64(clientId + ":" + clientSecret))
+}

@@ -10,6 +10,21 @@ func Issue(code int, request string) ApiError {
 	return ApiError{code, ERROR_MESSAGES[code], request}
 }
 
+const (
+	GENDER_UNKNOWN = 0
+	GENDER_MALE = 1 << iota
+	GENDER_FEMALE
+)
+
+const (
+	SNS_PLATFORM_WEIXIN = iota
+	SNS_PLATFORM_WEIBO
+	SNS_PLATFORM_QQ
+)
+
+const USER_NICKNAME_MEX_LEN int = 20
+const USER_AVATAR_MEX_LEN int = 255
+
 // error code definition, three part, [level][function][number]
 // [level], 1: system level, 2: service level
 // [function] 01: tokens; 02: verify code; ...
@@ -22,6 +37,9 @@ const (
 // users
 	ERROR_CODE_USERS_USER_NOT_EXISTS = 20101
 	ERROR_CODE_USERS_PHONE_REGISTERED = 20102
+	ERROR_CODE_USERS_INVALID_NICKNAME = 20103
+	ERROR_CODE_USERS_INVALID_GENDER_VALUE = 20104
+	ERROR_CODE_USERS_INVALID_AVATAR = 20105
 
 // verify code
 	ERROR_CODE_VERIFY_CODE_MISMATCH = 20201
@@ -29,6 +47,15 @@ const (
 // tokens
 	ERROR_CODE_TOKENS_PASSWORD_MISMATCH = 20301
 	ERROR_CODE_TOKENS_INVALID_TOKEN = 20302
+
+// auth
+	ERROR_CODE_AUTH_WEIXIN_AUTH_FAIL = 20401
+	ERROR_CODE_AUTH_WEIBO_AUTH_FAIL = 20402
+	ERROR_CODE_AUTH_QQ_AUTH_FAIL = 20403
+
+// basic auth
+	ERROR_CODE_BASIC_AUTH_FAIL = 20801
+
 )
 
 var (
@@ -40,6 +67,9 @@ var (
 		// users
 		ERROR_CODE_USERS_USER_NOT_EXISTS: "Queried user not exists",
 		ERROR_CODE_USERS_PHONE_REGISTERED: "Phone has registered",
+		ERROR_CODE_USERS_INVALID_NICKNAME: "Nickname invalid",
+		ERROR_CODE_USERS_INVALID_GENDER_VALUE: "Invalid gender value, should only be 1 or 2",
+		ERROR_CODE_USERS_INVALID_AVATAR: "Avatar url invalid",
 
 		// verify code
 		ERROR_CODE_VERIFY_CODE_MISMATCH: "Verify code mismatch",
@@ -47,5 +77,14 @@ var (
 		// tokens
 		ERROR_CODE_TOKENS_PASSWORD_MISMATCH: "Password mismatch",
 		ERROR_CODE_TOKENS_INVALID_TOKEN: "Invalid token",
+
+		// auth
+		ERROR_CODE_AUTH_WEIXIN_AUTH_FAIL: "Weixin auth fail",
+		ERROR_CODE_AUTH_WEIBO_AUTH_FAIL: "Weibo auth fail",
+		ERROR_CODE_AUTH_QQ_AUTH_FAIL: "QQ auth fail",
+
+		// basic auth
+		ERROR_CODE_BASIC_AUTH_FAIL: "Basic auth fail",
+
 	}
 )
