@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `weixin_nickname` varchar(127) NOT NULL DEFAULT '' ,
   `gender` integer NOT NULL DEFAULT 0 ,
   `avatar` varchar(191) NOT NULL DEFAULT '' ,
-  `create_at` bigint NOT NULL DEFAULT 0  UNIQUE,
-  `update_at` bigint NOT NULL DEFAULT 0
+  `create_at` bigint NOT NULL DEFAULT 0 UNIQUE,
+  `update_at` bigint NOT NULL DEFAULT 0 UNIQUE
 ) ENGINE=InnoDB;
 
 -- --------------------------------------------------

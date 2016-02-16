@@ -30,7 +30,7 @@ type User struct {
 	Avatar         string `json:"avatar,omitempty" orm:"column(avatar);size(191)"`
 
 	CreateAt       int64 `json:"create_at" orm:"column(create_at);unique"`
-	UpdateAt       int64 `json:"update_at" orm:"column(update_at)"`
+	UpdateAt       int64 `json:"update_at" orm:"column(update_at);unique"`
 }
 
 const USERS_TABLE_NAME string = "users"
@@ -213,6 +213,7 @@ func createOrUpdateUserInternal(o *orm.Ormer, user *User, authUser *utils.AuthUs
 			if err == 0 {
 				return user, 0
 			}
+			time.Sleep(1 * time.Millisecond)
 		}
 
 		beego.Warning(logTag, err)
@@ -246,6 +247,7 @@ func createOrUpdateUserInternal(o *orm.Ormer, user *User, authUser *utils.AuthUs
 		if err == nil {
 			return user, 0
 		}
+		time.Sleep(1 * time.Millisecond)
 	}
 
 	beego.Warning(logTag, err)
@@ -269,6 +271,7 @@ func CreateUserByPhone(phone *string, secret string) (*User, int) {
 		if err == nil {
 			return &user, 0
 		}
+		time.Sleep(1 * time.Millisecond)
 	}
 
 	beego.Warning("CreateUser fail: ", err)
@@ -291,11 +294,12 @@ func VerifyUserByPhone(phone *string, secret string) (*User, int) {
 
 	for i := 0; i < DB_UNIQUE_CONFLICT_TRY; i++ {
 		user.Token = utils.GenToken()
-		user.UpdateAt = time.Now().Unix() * 1000
+		user.UpdateAt = utils.GetTimeMillis()
 		_, err = o.Update(&user)
 		if err == nil {
 			return &user, 0
 		}
+		time.Sleep(1 * time.Millisecond)
 	}
 
 	beego.Warning("VerifyUser, update token fail: ", err)
@@ -312,7 +316,15 @@ func UpdateUser(user *User) int {
 		return utils.ERROR_CODE_SYSTEM_ERROR
 	}
 
-	errNum := updateUserInternal(&o, user)
+	var errNum int
+	for i := 0; i < DB_UNIQUE_CONFLICT_TRY; i++ {
+		user.UpdateAt = utils.GetTimeMillis()
+		errNum = updateUserInternal(&o, user)
+		if errNum == 0 {
+			break
+		}
+		time.Sleep(1 * time.Millisecond)
+	}
 	if errNum > 0 {
 		o.Rollback()
 		return errNum
@@ -330,7 +342,6 @@ func UpdateUser(user *User) int {
 
 // callee's duty to commit & rollback
 func updateUserInternal(o *orm.Ormer, user *User) int {
-	user.UpdateAt = utils.GetTimeMillis()
 	_, err := (*o).Update(user)
 	if err != nil {
 		beego.Warning("UpdateUser, update user fail: ", user, err)

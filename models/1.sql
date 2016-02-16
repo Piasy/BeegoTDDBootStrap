@@ -5,12 +5,21 @@ CREATE DATABASE IF NOT EXISTS `test` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8m
 -- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-  `uid` bigint NOT NULL DEFAULT 0 ,
-  `username` varchar(255) NOT NULL DEFAULT '' ,
-  `password` varchar(255) NOT NULL DEFAULT '' ,
-  `nickname` varchar(255) NOT NULL DEFAULT '' ,
-  `token` varchar(255) NOT NULL DEFAULT '' ,
-  `phone` varchar(255) NOT NULL DEFAULT ''
+  `uid` bigint NOT NULL DEFAULT 0  UNIQUE,
+  `token` varchar(40) NOT NULL DEFAULT ''  UNIQUE,
+  `phone` varchar(11) UNIQUE,
+  `weixin` varchar(191) UNIQUE,
+  `weibo` varchar(191) UNIQUE,
+  `qq` varchar(191) UNIQUE,
+  `password` varchar(40) NOT NULL DEFAULT '' ,
+  `nickname` varchar(12) NOT NULL DEFAULT '' ,
+  `qq_nickname` varchar(127) NOT NULL DEFAULT '' ,
+  `weibo_nickname` varchar(127) NOT NULL DEFAULT '' ,
+  `weixin_nickname` varchar(127) NOT NULL DEFAULT '' ,
+  `gender` integer NOT NULL DEFAULT 0 ,
+  `avatar` varchar(191) NOT NULL DEFAULT '' ,
+  `create_at` bigint NOT NULL DEFAULT 0 UNIQUE,
+  `update_at` bigint NOT NULL DEFAULT 0 UNIQUE
 ) ENGINE=InnoDB;
 
 -- --------------------------------------------------
@@ -18,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS `verifications` (
   `id` bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-  `phone` varchar(255) NOT NULL DEFAULT '' ,
-  `code` varchar(255) NOT NULL DEFAULT '' ,
+  `phone` varchar(20) NOT NULL DEFAULT ''  UNIQUE,
+  `code` varchar(6) NOT NULL DEFAULT '' ,
   `expire` bigint NOT NULL DEFAULT 0
 ) ENGINE=InnoDB;
