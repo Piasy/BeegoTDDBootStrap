@@ -12,7 +12,7 @@ type UsersController struct {
 	beego.Controller
 }
 
-// @Title Post
+// @Title CreateUserWithPhone
 // @Description 通过手机号注册, 返回所有字段
 // @Param	phone		query 	string	true		"用户手机号"
 // @Param	code		query 	string	true		"手机验证码"
@@ -52,7 +52,7 @@ func (this *UsersController) Post() {
 	this.ServeJSON()
 }
 
-// @Title Get
+// @Title GetUserByUid
 // @Description [允许游客]通过uid获取用户信息; <br>请求自己的信息返回所有字段; <br>请求他人信息只有uid, nickname, avatar, gender字段; <br>其中gender 0表示未知, 1表示男, 2表示女
 // @Param	uid		path 	int64	true		"目标用户uid"
 // @Param	token		query 	string	true		"自己的token"
@@ -98,7 +98,7 @@ func (this *UsersController) Get() {
 	this.ServeJSON()
 }
 
-// @Title Patch
+// @Title UpdateUserInfo
 // @Description 修改用户自己的信息, 修改哪些字段就传哪些字段, 成功后返回所有字段, <br/>注意: N位中英数限制, 指只能有汉字/英文字母/阿拉伯数字, 不能有标点符号, 特殊符号, 每个汉字/字母/数字长度都算1
 // @Param	token		query 	string	true		"Token"
 // @Param	phone		query 	string	false		"更换绑定手机号"

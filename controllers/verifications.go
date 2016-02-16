@@ -12,11 +12,11 @@ type VerificationsController struct {
 	beego.Controller
 }
 
-// @Title Post
+// @Title CreateVerification
 // @Description 请求短信验证码
 // @Param	phone		query 	string	true		"手机号"
 // @Param	Authorization		header 	string	true		"Basic auth的授权码, 计算方式见wiki"
-// @Success 201 {object} models.SuccessResult
+// @Success 201 "" ""
 // @Failure 401 basic auth失败
 // @Failure 403 参数错误：缺失或格式错误
 // @Failure 422 手机号已注册
@@ -39,7 +39,6 @@ func (this *VerificationsController) Post() {
 		this.Data["json"] = utils.Issue(err, this.Ctx.Request.URL.String())
 	} else {
 		this.Ctx.ResponseWriter.WriteHeader(201)
-		this.Data["json"] = &models.SuccessResult{true}
 	}
 	this.ServeJSON()
 }

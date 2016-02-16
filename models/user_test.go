@@ -195,10 +195,12 @@ func TestUpdateUser(t *testing.T) {
 func TestMysqlLikeSearch(t *testing.T) {
 	initORM()
 	o := orm.NewOrm()
-	user1 := models.User{Uid: utils.GenUid(), Token: utils.GenToken(), CreateAt: utils.GetTimeMillis(), Nickname: "张三李四"}
+	user1 := models.User{Uid: utils.GenUid(), Token: utils.GenToken(),
+		CreateAt: utils.GetTimeMillis(), Nickname: "张三李四", UpdateAt: utils.GetTimeMillis() + 5}
 	_, err := o.Insert(&user1)
 	assert.Nil(t, err)
-	user2 := models.User{Uid: utils.GenUid(), Token: utils.GenToken(), CreateAt: utils.GetTimeMillis() + 10, Nickname: "张李三四"}
+	user2 := models.User{Uid: utils.GenUid(), Token: utils.GenToken(),
+		CreateAt: utils.GetTimeMillis() + 10, Nickname: "张李三四", UpdateAt: utils.GetTimeMillis() + 15}
 	_, err = o.Insert(&user2)
 	assert.Nil(t, err)
 

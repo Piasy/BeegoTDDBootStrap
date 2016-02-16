@@ -85,13 +85,7 @@ func createVerification(t *testing.T, subject, phone string) *models.Verificatio
 
 	Convey("Subject: " + subject + ": create verification\n", t, func() {
 		Convey("Status code should be 201", func() {
-			soResponseWithStatusCode(recorder, 201)
-		})
-		Convey("Create should success", func() {
-			var success models.SuccessResult
-			err := json.Unmarshal(recorder.Body.Bytes(), &success)
-			So(err, ShouldBeNil)
-			So(success.Success, ShouldBeTrue)
+			soEmptyResponseWithStatusCode(recorder, 201)
 		})
 	})
 

@@ -12,12 +12,12 @@ import (
 type User struct {
 	Id             int64 `json:"-" orm:"pk;auto"`
 
-	Uid            int64 `json:"uid" orm:"column(uid);unique;index"`
-	Token          string `json:"token,omitempty" orm:"column(token);unique;index;size(40)"`
-	Phone          *string `json:"phone,omitempty" orm:"column(phone);null;unique;index;size(11)"`
-	WeiXin         *string `json:"-" orm:"column(weixin);null;unique;index;size(191)"`
-	WeiBo          *string `json:"-" orm:"column(weibo);null;unique;index;size(191)"`
-	QQ             *string `json:"-" orm:"column(qq);null;unique;index;size(191)"`
+	Uid            int64 `json:"uid" orm:"column(uid);unique"`
+	Token          string `json:"token,omitempty" orm:"column(token);unique;size(40)"`
+	Phone          *string `json:"phone,omitempty" orm:"column(phone);null;unique;size(11)"`
+	WeiXin         *string `json:"-" orm:"column(weixin);null;unique;size(191)"`
+	WeiBo          *string `json:"-" orm:"column(weibo);null;unique;size(191)"`
+	QQ             *string `json:"-" orm:"column(qq);null;unique;size(191)"`
 
 	Password       string `json:"-" orm:"column(password);size(40)"`
 

@@ -16,6 +16,11 @@ func soResponseWithStatusCode(w *httptest.ResponseRecorder, code int) {
 	So(w.Body.Len(), ShouldBeGreaterThan, 0)
 }
 
+func soEmptyResponseWithStatusCode(w *httptest.ResponseRecorder, code int) {
+	So(w.Code, ShouldEqual, code)
+	So(w.Body.String(), ShouldEqual, "null")
+}
+
 func soUserShouldEqual(actual, expect *models.User) {
 	So(actual.Uid, ShouldEqual, expect.Uid)
 
