@@ -2,17 +2,17 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/config"
 	_ "github.com/go-sql-driver/mysql"
 
-	_ "github.com/Piasy/BeegoTDDBootStrap/routers"
-	_ "github.com/Piasy/BeegoTDDBootStrap/models"
-	"github.com/Piasy/BeegoTDDBootStrap/controllers"
-	"github.com/Piasy/BeegoTDDBootStrap/utils"
+	_ "github.com/Piasy/HabitsAPI/docs"
+	_ "github.com/Piasy/HabitsAPI/routers"
+	_ "github.com/Piasy/HabitsAPI/models"
+	"github.com/Piasy/HabitsAPI/controllers"
+	"github.com/Piasy/HabitsAPI/utils"
 )
 
 func init() {
@@ -39,12 +39,7 @@ func init() {
 }
 
 func main() {
-	beego.SetLogger("file", `{"filename":"logs/beego_bootstrap_api.log"}`)
-	orm.RunCommand()
-	if beego.BConfig.RunMode == "dev" {
-		orm.Debug = true
-		file, _ := os.OpenFile("logs/orm.log", os.O_APPEND|os.O_WRONLY, 0600)
-		orm.DebugLog = orm.NewLog(file)
-	}
+	beego.BConfig.WebConfig.DirectoryIndex = true
+	beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	beego.Run()
 }

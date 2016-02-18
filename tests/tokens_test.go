@@ -2,11 +2,17 @@ package test
 
 import (
 	"net/http"
+	"net/http/httptest"
 	"testing"
 	"bytes"
 	"fmt"
+	"encoding/json"
+
+	"github.com/astaxie/beego"
+	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/Piasy/BeegoTDDBootStrap/utils"
+	"github.com/Piasy/BeegoTDDBootStrap/models"
 )
 
 func TestPostTokenParamsError(t *testing.T) {
@@ -55,4 +61,27 @@ func TestPostTokenSuccess(t *testing.T) {
 
 	deleteVerification(t, verification.Id)
 	deleteUser(t, user.Id)
+}
+
+func updateTokenByPhone(t *testing.T, subject string, expect *models.User, secret string) {
+	request, _ := http.NewRequest("POST", "/v1/tokens/",
+		bytes.NewBuffer([]byte(fmt.Sprintf("phone=%s&secret=%s", *expect.Phone, secret))))
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Add("Authorization", "dGVzdF9jbGllbnQ6dGVzdF9wYXNz")
+	recorder := httptest.NewRecorder()
+	beego.BeeApp.Handlers.ServeHTTP(recorder, request)
+	beego.Debug("testing <", subject, ">: verify user, Code[", recorder.Code, "]\n", recorder.Body.String())
+
+	Convey("Subject: " + subject + ": verify user\n", t, func() {
+		Convey("Get user status code should be 201", func() {
+			soResponseWithStatusCode(recorder, 201)
+		})
+		Convey("Get user should be same as created", func() {
+			var got models.User
+			err := json.Unmarshal(recorder.Body.Bytes(), &got)
+			So(err, ShouldBeNil)
+			expect.UpdateAt = got.UpdateAt
+			soUserShouldEqual(&got, expect)
+		})
+	})
 }

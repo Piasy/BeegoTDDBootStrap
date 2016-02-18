@@ -216,3 +216,54 @@ func TestMysqlLikeSearch(t *testing.T) {
 	deleteUser(t, user1.Id)
 	deleteUser(t, user2.Id)
 }
+
+func assertUserEquals(t *testing.T, expect, actual *models.User) {
+	assert.Equal(t, expect.Id, actual.Id)
+
+	assert.Equal(t, expect.Uid, actual.Uid)
+	assert.Equal(t, expect.Token, actual.Token)
+	assert.True(t, utils.AreStringEquals(actual.Phone, expect.Phone))
+	assert.True(t, utils.AreStringEquals(actual.WeiXin, expect.WeiXin))
+	assert.True(t, utils.AreStringEquals(actual.WeiBo, expect.WeiBo))
+	assert.True(t, utils.AreStringEquals(actual.QQ, expect.QQ))
+
+	assert.Equal(t, expect.Password, actual.Password)
+	assert.Equal(t, expect.Nickname, actual.Nickname)
+	assert.Equal(t, expect.QQNickName, actual.QQNickName)
+	assert.Equal(t, expect.WeiBoNickName, actual.WeiBoNickName)
+	assert.Equal(t, expect.WeiXinNickName, actual.WeiXinNickName)
+	assert.Equal(t, expect.Gender, actual.Gender)
+	assert.Equal(t, expect.Avatar, actual.Avatar)
+
+	assert.Equal(t, expect.CreateAt, actual.CreateAt)
+	assert.Equal(t, expect.UpdateAt, actual.UpdateAt)
+
+}
+
+func assertUserEqualsWithoutToken(t *testing.T, expect, actual *models.User) {
+	assert.Equal(t, expect.Id, actual.Id)
+
+	assert.Equal(t, expect.Uid, actual.Uid)
+	assert.True(t, utils.AreStringEquals(actual.Phone, expect.Phone))
+	assert.True(t, utils.AreStringEquals(actual.WeiXin, expect.WeiXin))
+	assert.True(t, utils.AreStringEquals(actual.WeiBo, expect.WeiBo))
+	assert.True(t, utils.AreStringEquals(actual.QQ, expect.QQ))
+
+	assert.Equal(t, expect.Password, actual.Password)
+	assert.Equal(t, expect.Nickname, actual.Nickname)
+	assert.Equal(t, expect.QQNickName, actual.QQNickName)
+	assert.Equal(t, expect.WeiBoNickName, actual.WeiBoNickName)
+	assert.Equal(t, expect.WeiXinNickName, actual.WeiXinNickName)
+	assert.Equal(t, expect.Gender, actual.Gender)
+	assert.Equal(t, expect.Avatar, actual.Avatar)
+
+	assert.Equal(t, expect.CreateAt, actual.CreateAt)
+	assert.Equal(t, expect.UpdateAt, actual.UpdateAt)
+}
+
+func deleteUser(t *testing.T, id int64) {
+	o := orm.NewOrm()
+	user := models.User{Id: id}
+	_, err := o.Delete(&user)
+	assert.Nil(t, err)
+}

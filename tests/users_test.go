@@ -3,14 +3,19 @@ package test
 import (
 	"fmt"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 	"bytes"
 	"time"
+	"encoding/json"
 
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/stretchr/testify/assert"
+	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/Piasy/BeegoTDDBootStrap/utils"
+	"github.com/Piasy/BeegoTDDBootStrap/models"
 )
 
 func TestGetUserParamsErrorNoUid(t *testing.T) {
@@ -241,4 +246,86 @@ func TestPatchUserInfoOneByOneWithIllegalParams(t *testing.T) {
 
 	deleteVerification(t, verification.Id)
 	deleteUser(t, user.Id)
+}
+
+func createUser(t *testing.T, subject, phone, secret, code string) *models.User {
+	request, _ := http.NewRequest("POST", "/v1/users/",
+		bytes.NewBuffer([]byte(fmt.Sprintf("phone=%s&secret=%s&code=%s", phone, secret, code))))
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Add("Authorization", "dGVzdF9jbGllbnQ6dGVzdF9wYXNz")
+	recorder := httptest.NewRecorder()
+	beego.BeeApp.Handlers.ServeHTTP(recorder, request)
+	beego.Debug("testing <", subject, ">: create user, Code[", recorder.Code, "]\n", recorder.Body.String())
+
+	o := orm.NewOrm()
+	fromDB := models.User{Phone: &phone}
+	err := o.Read(&fromDB, "Phone")
+	assert.Nil(t, err)
+
+	Convey("Subject: " + subject + ": create user\n", t, func() {
+		Convey("Status code should be 201", func() {
+			soResponseWithStatusCode(recorder, 201)
+		})
+		Convey("Create should success", func() {
+			var created models.User
+			err := json.Unmarshal(recorder.Body.Bytes(), &created)
+			So(err, ShouldBeNil)
+			soUserShouldEqual(&created, &fromDB)
+		})
+	})
+
+	return &fromDB
+}
+
+func patchUserInfo(t *testing.T, subject, token string, body []byte) *models.User {
+	request, _ := http.NewRequest("PATCH", "/v1/users/", bytes.NewBuffer(body))
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	recorder := httptest.NewRecorder()
+	beego.BeeApp.Handlers.ServeHTTP(recorder, request)
+	beego.Debug("testing <", subject, ">, Code[", recorder.Code, "]\n", recorder.Body.String())
+
+	o := orm.NewOrm()
+	fromDB := models.User{Token: token}
+	err := o.Read(&fromDB, "Token")
+	assert.Nil(t, err)
+
+	Convey("Subject: " + subject + "\n", t, func() {
+		Convey("Status code should be 201", func() {
+			soResponseWithStatusCode(recorder, 201)
+		})
+		Convey("Create should success", func() {
+			var updated models.User
+			err := json.Unmarshal(recorder.Body.Bytes(), &updated)
+			So(err, ShouldBeNil)
+			soUserShouldEqual(&updated, &fromDB)
+		})
+	})
+
+	return &fromDB
+}
+
+func checkHasUserByUid(t *testing.T, subject string, expect *models.User) {
+	request, _ := http.NewRequest("GET", fmt.Sprintf("/v1/users/%d?token=%s", expect.Uid, expect.Token), nil)
+	recorder := httptest.NewRecorder()
+	beego.BeeApp.Handlers.ServeHTTP(recorder, request)
+	beego.Debug("testing <", subject, ">: get user, Code[", recorder.Code, "]\n", recorder.Body.String())
+
+	Convey("Subject: " + subject + ": get user\n", t, func() {
+		Convey("Get user status code should be 200", func() {
+			soResponseWithStatusCode(recorder, 200)
+		})
+		Convey("Get user should be same as created", func() {
+			var got models.User
+			err := json.Unmarshal(recorder.Body.Bytes(), &got)
+			So(err, ShouldBeNil)
+			soUserShouldEqual(&got, expect)
+		})
+	})
+}
+
+func deleteUser(t *testing.T, id int64) {
+	o := orm.NewOrm()
+	user := models.User{Id: id}
+	_, err := o.Delete(&user)
+	assert.Nil(t, err)
 }

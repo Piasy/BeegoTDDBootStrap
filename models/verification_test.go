@@ -121,3 +121,10 @@ func TestCheckVerifyCode(t *testing.T) {
 	err = o.Read(&verification, "Phone")
 	assert.NotNil(t, err)
 }
+
+func deleteVerification(t *testing.T, id int64) {
+	o := orm.NewOrm()
+	verification := models.Verification{Id: id}
+	_, err := o.Delete(&verification)
+	assert.Nil(t, err)
+}

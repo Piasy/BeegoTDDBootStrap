@@ -12,7 +12,7 @@ type TokensController struct {
 	beego.Controller
 }
 
-// @Title Post
+// @Title LoginWithPhone
 // @Description 通过手机号和密码获取Token（登录）
 // @Param	phone		query 	string	true		"用户手机号"
 // @Param	secret		query 	string	true		"加密处理后的密码，全部小写"
